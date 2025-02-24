@@ -5,27 +5,32 @@ pool:
   name: Default
 
 variables:
-  SONAR_TOKEN: $(SonarCloudToken)  # Secret variable for SonarCloud
+  SONAR_TOKEN: $(SonarCloudToken)
   SONAR_PROJECT_KEY: 'mubeenakausar267_WebGoat'
   SONAR_ORG: 'mubeenakausar267'
 
 steps:
   - checkout: self
 
-  # ✅ Manually set JAVA_HOME
+  # ✅ Ensure JAVA_HOME is Correctly Set
   - script: |
       echo "Setting JAVA_HOME manually"
       echo "##vso[task.setvariable variable=JAVA_HOME]C:\Program Files\Java\jdk-17"
       echo "##vso[task.prependpath]C:\Program Files\Java\jdk-17\bin"
     displayName: 'Set JAVA_HOME'
 
-  # ✅ Manually set Maven Path
+  # ✅ Ensure MAVEN_HOME is Correctly Set
   - script: |
       echo "Setting Maven Path"
       echo "##vso[task.setvariable variable=MAVEN_HOME]D:\WebGoat\apache-maven-3.9.9-bin\apache-maven-3.9.9"
       echo "##vso[task.prependpath]D:\WebGoat\apache-maven-3.9.9-bin\apache-maven-3.9.9\bin"
     displayName: 'Set Maven Path'
 
+  # ✅ Verify Maven Installation in Pipeline
+  - script: |
+      echo "Checking Maven version..."
+      mvn -version
+    displayName: 'Verify Maven Installation'
 
   # ✅ Prepare SonarCloud Analysis
   - task: SonarCloudPrepare@1
@@ -41,15 +46,15 @@ steps:
         sonar.organization=$(SONAR_ORG)
         sonar.sources=.
 
-  # ✅ Run Maven with Correct Java Settings
+  # ✅ Run Maven Build
   - task: Maven@3
     inputs:
       mavenPomFile: 'pom.xml'
       goals: 'clean install -U'
       publishJUnitResults: false
       codeCoverageToolOption: 'JaCoCo'
-      javaHomeOption: 'JDKVersion'
-      mavenVersionOption: 'Default'
+      javaHomeOption: 'Path'  # Ensures JAVA_HOME is respected
+      mavenVersionOption: 'Path'  # Ensures MAVEN_HOME is used
       mavenOptions: '-Xmx1024m'
       sonarQubeRunAnalysis: true
 
