@@ -13,6 +13,13 @@ variables:
 steps:
   - checkout: self
 
+  # ✅ Install Java 17 Using JavaToolInstaller (Replaces UseJavaVersion)
+  - task: JavaToolInstaller@0
+    inputs:
+      versionSpec: '17'
+      jdkArchitecture: 'x64'
+      jdkSource: 'PreInstalled'
+
   - task: SonarCloudPrepare@1
     inputs:
       SonarCloud: 'SonarCloudServiceConnection'
@@ -32,7 +39,7 @@ steps:
       goals: 'clean install -U'  # Added `-U` to force update dependencies
       publishJUnitResults: false
       codeCoverageToolOption: 'JaCoCo'
-      javaHomeOption: 'JDKVersion'
+      javaHomeOption: 'Path'  # Explicitly set Java Home option
       mavenVersionOption: 'Default'
       mavenOptions: '-Xmx1024m'
       sonarQubeRunAnalysis: true
