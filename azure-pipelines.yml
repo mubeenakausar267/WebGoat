@@ -28,8 +28,10 @@ steps:
 
   # ✅ Verify Maven Installation in Pipeline
   - script: |
-      echo Checking Maven version...
-      "D:\WebGoat\apache-maven-3.9.9-bin\apache-maven-3.9.9\bin\mvn.cmd" -version
+        echo Checking Maven version...
+        set MAVEN_HOME=D:\WebGoat\apache-maven-3.9.9-bin\apache-maven-3.9.9
+        set PATH=%MAVEN_HOME%\bin;%PATH%
+        mvn -version
     displayName: 'Verify Maven Installation'
 
 
@@ -55,8 +57,8 @@ steps:
       goals: 'clean install -U'
       publishJUnitResults: false
       codeCoverageToolOption: 'JaCoCo'
-      javaHomeOption: 'Path'  # Ensures JAVA_HOME is respected
-      mavenVersionOption: 'Path'  # Ensures MAVEN_HOME is used
+      javaHomeOption: 'Path'
+      mavenVersionOption: 'Path'
       mavenOptions: '-Xmx1024m'
       sonarQubeRunAnalysis: true
 
