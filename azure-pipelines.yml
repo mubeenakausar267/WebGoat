@@ -23,8 +23,8 @@ steps:
   - task: JavaToolInstaller@0
     inputs:
       versionSpec: '17'
-      jdkArchitecture: 'x64'
-      jdkSource: 'LocalDirectory'
+      jdkArchitectureOption: 'x64'
+      jdkDestinationDirectory: 'LocalDirectory'
       jdkFile: 'C:\Program Files\Java\jdk-17'
 
   # ✅ Prepare SonarCloud Analysis
