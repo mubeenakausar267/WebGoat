@@ -29,9 +29,8 @@ steps:
   - task: Maven@3  # Change to Gradle if needed
     inputs:
       mavenPomFile: 'pom.xml'
-      goals: 'clean verify'
+      goals: 'clean install -U'  # Added `-U` to force update dependencies
       publishJUnitResults: false
-      testResultsFiles: '**/surefire-reports/TEST-*.xml'
       codeCoverageToolOption: 'JaCoCo'
       javaHomeOption: 'JDKVersion'
       mavenVersionOption: 'Default'
