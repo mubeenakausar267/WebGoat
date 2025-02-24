@@ -7,7 +7,7 @@ pool:
 
 variables:
   SONAR_TOKEN: $(SonarCloudToken)  # Secret variable for SonarCloud
-  SONAR_PROJECT_KEY: 'mubeenakausar267'
+  SONAR_PROJECT_KEY: 'mubeenakausar267_WebGoat'
   SONAR_ORG: 'mubeenakausar267'
 
 steps:
