@@ -1,0 +1,44 @@
+trigger:
+  - main  # Runs on the main branch
+
+pool:
+  vmImage: 'ubuntu-latest'  # Runs on free Microsoft-hosted agent
+
+variables:
+  SONAR_TOKEN: $(SonarCloudToken)  # Secret variable for SonarCloud
+  SONAR_PROJECT_KEY: 'your-org_key:webgoat'
+  SONAR_ORG: 'your-org'
+
+steps:
+  - checkout: self
+
+  - task: SonarCloudPrepare@1
+    inputs:
+      SonarCloud: 'SonarCloudServiceConnection'
+      organization: '$(SONAR_ORG)'
+      scannerMode: 'CLI'
+      configMode: 'manual'
+      projectKey: '$(SONAR_PROJECT_KEY)'
+      projectName: 'WebGoat'
+      extraProperties: |
+        sonar.projectKey=$(SONAR_PROJECT_KEY)
+        sonar.organization=$(SONAR_ORG)
+        sonar.sources=.
+
+  - task: Maven@3  # Change to Gradle if needed
+    inputs:
+      mavenPomFile: 'pom.xml'
+      goals: 'clean verify'
+      publishJUnitResults: false
+      testResultsFiles: '**/surefire-reports/TEST-*.xml'
+      codeCoverageToolOption: 'JaCoCo'
+      javaHomeOption: 'JDKVersion'
+      mavenVersionOption: 'Default'
+      mavenOptions: '-Xmx1024m'
+      sonarQubeRunAnalysis: true
+
+  - task: SonarCloudAnalyze@1
+
+  - task: SonarCloudPublish@1
+    inputs:
+      pollingTimeoutSec: '300'
