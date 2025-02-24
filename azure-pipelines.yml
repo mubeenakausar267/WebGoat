@@ -26,6 +26,7 @@ steps:
       echo "##vso[task.prependpath]D:\WebGoat\apache-maven-3.9.9-bin\apache-maven-3.9.9\bin"
     displayName: 'Set Maven Path'
 
+
   # ✅ Prepare SonarCloud Analysis
   - task: SonarCloudPrepare@1
     inputs:
