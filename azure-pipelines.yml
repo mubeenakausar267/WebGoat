@@ -14,24 +14,23 @@ steps:
 
   # ✅ Ensure JAVA_HOME is Correctly Set
   - script: |
-      echo "Setting JAVA_HOME manually"
       echo "##vso[task.setvariable variable=JAVA_HOME]C:\Program Files\Java\jdk-17"
       echo "##vso[task.prependpath]C:\Program Files\Java\jdk-17\bin"
     displayName: 'Set JAVA_HOME'
 
   # ✅ Ensure MAVEN_HOME is Correctly Set
   - script: |
-      echo "Setting Maven Path"
       echo "##vso[task.setvariable variable=MAVEN_HOME]D:\WebGoat\apache-maven-3.9.9-bin\apache-maven-3.9.9"
       echo "##vso[task.prependpath]D:\WebGoat\apache-maven-3.9.9-bin\apache-maven-3.9.9\bin"
     displayName: 'Set Maven Path'
 
-  # ✅ Corrected Force Java 17 for Maven (Fixed Syntax)
+  # ✅ **Fix Maven Command Syntax**
   - script: |
       echo "Forcing Maven Compiler Plugin to use Java 17"
-      call mvn -f pom.xml clean install -U "-Dmaven.compiler.release=17"
+      D:\WebGoat\apache-maven-3.9.9-bin\apache-maven-3.9.9\bin\mvn -f pom.xml clean install -U -Dmaven.compiler.release=17
     displayName: 'Force Java 17 for Maven'
     workingDirectory: D:\agent\_work\1\s
+    failOnStderr: false
 
   # ✅ Prepare SonarCloud Analysis
   - task: SonarCloudPrepare@1
