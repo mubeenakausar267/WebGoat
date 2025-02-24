@@ -2,7 +2,6 @@ trigger:
   - main  # Runs on the main branch
 
 pool:
-  #vmImage: 'Default'  # Runs on free Microsoft-hosted agent= ubuntu-latest
   name: Default
 
 variables:
@@ -13,13 +12,22 @@ variables:
 steps:
   - checkout: self
 
-  # ✅ Install Java 17 Using JavaToolInstaller (Replaces UseJavaVersion)
+  # ✅ Manually set JAVA_HOME since JavaToolInstaller is failing
+  - script: |
+      echo "Setting JAVA_HOME manually"
+      echo "##vso[task.setvariable variable=JAVA_HOME]C:\Program Files\Java\jdk-17"
+      echo "##vso[task.prependpath]C:\Program Files\Java\jdk-17\bin"
+    displayName: 'Set JAVA_HOME'
+
+  # ✅ Install Java 17
   - task: JavaToolInstaller@0
     inputs:
       versionSpec: '17'
-      jdkArchitectureOption: 'x64'
-      jdkSourceOption: 'PreInstalled'
+      jdkArchitecture: 'x64'
+      jdkSource: 'LocalDirectory'
+      jdkFile: 'C:\Program Files\Java\jdk-17'
 
+  # ✅ Prepare SonarCloud Analysis
   - task: SonarCloudPrepare@1
     inputs:
       SonarCloud: 'SonarCloudServiceConnection'
@@ -33,13 +41,14 @@ steps:
         sonar.organization=$(SONAR_ORG)
         sonar.sources=.
 
-  - task: Maven@3  # Change to Gradle if needed
+  # ✅ Run Maven with Correct Java Settings
+  - task: Maven@3
     inputs:
       mavenPomFile: 'pom.xml'
-      goals: 'clean install -U'  # Added `-U` to force update dependencies
+      goals: 'clean install -U'
       publishJUnitResults: false
       codeCoverageToolOption: 'JaCoCo'
-      javaHomeOption: 'Path'  # Explicitly set Java Home option
+      javaHomeOption: 'JDKVersion'  # Ensure JDK 17 is picked up
       mavenVersionOption: 'Default'
       mavenOptions: '-Xmx1024m'
       sonarQubeRunAnalysis: true
