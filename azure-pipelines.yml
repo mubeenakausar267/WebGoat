@@ -18,7 +18,7 @@ steps:
     inputs:
       versionSpec: '17'
       jdkArchitectureOption: 'x64'
-      jdkSource: 'PreInstalled'
+      jdkSourceOption: 'PreInstalled'
 
   - task: SonarCloudPrepare@1
     inputs:
