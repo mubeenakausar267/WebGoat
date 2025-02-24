@@ -1,5 +1,5 @@
 trigger:
-  - main
+  - main  # Runs on the main branch
 
 pool:
   name: Default
@@ -12,14 +12,16 @@ variables:
 steps:
   - checkout: self
 
-  # ✅ Set Java Home
+  # ✅ Ensure JAVA_HOME is Correctly Set
   - script: |
+      echo "Setting JAVA_HOME manually"
       echo "##vso[task.setvariable variable=JAVA_HOME]C:\Program Files\Java\jdk-17"
       echo "##vso[task.prependpath]C:\Program Files\Java\jdk-17\bin"
     displayName: 'Set JAVA_HOME'
 
-  # ✅ Set Maven Home
+  # ✅ Ensure MAVEN_HOME is Correctly Set
   - script: |
+      echo "Setting Maven Path"
       echo "##vso[task.setvariable variable=MAVEN_HOME]D:\WebGoat\apache-maven-3.9.9-bin\apache-maven-3.9.9"
       echo "##vso[task.prependpath]D:\WebGoat\apache-maven-3.9.9-bin\apache-maven-3.9.9\bin"
     displayName: 'Set Maven Path'
@@ -38,7 +40,7 @@ steps:
         sonar.organization=$(SONAR_ORG)
         sonar.sources=.
 
-  # ✅ Run Maven Build (without verification step)
+  # ✅ Run Maven Build with Explicit Maven Path
   - task: Maven@3
     inputs:
       mavenPomFile: 'pom.xml'
@@ -47,6 +49,7 @@ steps:
       codeCoverageToolOption: 'JaCoCo'
       javaHomeOption: 'Path'
       mavenVersionOption: 'Path'
+      mavenPath: 'D:\WebGoat\apache-maven-3.9.9-bin\apache-maven-3.9.9'  # ✅ Explicitly set the Maven path
       mavenOptions: '-Xmx1024m'
       sonarQubeRunAnalysis: true
 
