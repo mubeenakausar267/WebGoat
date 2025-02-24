@@ -28,9 +28,11 @@ steps:
 
   # ✅ Verify Maven Installation in Pipeline
   - script: |
-      echo "Checking Maven version..."
-      & "D:\WebGoat\apache-maven-3.9.9-bin\apache-maven-3.9.9\bin\mvn.cmd" -version
+      echo Checking Maven version...
+      "D:\WebGoat\apache-maven-3.9.9-bin\apache-maven-3.9.9\bin\mvn.cmd" -version
     displayName: 'Verify Maven Installation'
+
+
 
   # ✅ Prepare SonarCloud Analysis
   - task: SonarCloudPrepare@1
