@@ -1,5 +1,5 @@
 trigger:
-  - main  # Runs on the main branch
+  - main
 
 pool:
   name: Default
@@ -12,29 +12,17 @@ variables:
 steps:
   - checkout: self
 
-  # ✅ Ensure JAVA_HOME is Correctly Set
+  # ✅ Set Java Home
   - script: |
-      echo "Setting JAVA_HOME manually"
       echo "##vso[task.setvariable variable=JAVA_HOME]C:\Program Files\Java\jdk-17"
       echo "##vso[task.prependpath]C:\Program Files\Java\jdk-17\bin"
     displayName: 'Set JAVA_HOME'
 
-  # ✅ Ensure MAVEN_HOME is Correctly Set
+  # ✅ Set Maven Home
   - script: |
-      echo "Setting Maven Path"
       echo "##vso[task.setvariable variable=MAVEN_HOME]D:\WebGoat\apache-maven-3.9.9-bin\apache-maven-3.9.9"
       echo "##vso[task.prependpath]D:\WebGoat\apache-maven-3.9.9-bin\apache-maven-3.9.9\bin"
     displayName: 'Set Maven Path'
-
-  # ✅ Verify Maven Installation in Pipeline
-  - script: |
-        echo Checking Maven version...
-        set MAVEN_HOME=D:\WebGoat\apache-maven-3.9.9-bin\apache-maven-3.9.9
-        set PATH=%MAVEN_HOME%\bin;%PATH%
-        mvn -version
-    displayName: 'Verify Maven Installation'
-
-
 
   # ✅ Prepare SonarCloud Analysis
   - task: SonarCloudPrepare@1
@@ -50,7 +38,7 @@ steps:
         sonar.organization=$(SONAR_ORG)
         sonar.sources=.
 
-  # ✅ Run Maven Build
+  # ✅ Run Maven Build (without verification step)
   - task: Maven@3
     inputs:
       mavenPomFile: 'pom.xml'
