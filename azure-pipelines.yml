@@ -18,7 +18,6 @@ steps:
       echo "##vso[task.setvariable variable=JAVA_HOME]C:\Program Files\Java\jdk-17"
       echo "##vso[task.prependpath]C:\Program Files\Java\jdk-17\bin"
     displayName: 'Set JAVA_HOME'
-  
 
   # ✅ Ensure MAVEN_HOME is Correctly Set
   - script: |
@@ -26,6 +25,12 @@ steps:
       echo "##vso[task.setvariable variable=MAVEN_HOME]D:\WebGoat\apache-maven-3.9.9-bin\apache-maven-3.9.9"
       echo "##vso[task.prependpath]D:\WebGoat\apache-maven-3.9.9-bin\apache-maven-3.9.9\bin"
     displayName: 'Set Maven Path'
+
+  # ✅ Force Java 17 for Maven (Override without modifying pom.xml)
+  - script: |
+      echo "Forcing Maven Compiler Plugin to use Java 17"
+      mvn -f pom.xml clean install -U -Dmaven.compiler.release=17
+    displayName: 'Force Java 17 for Maven'
 
   # ✅ Prepare SonarCloud Analysis
   - task: SonarCloudPrepare@1
@@ -41,18 +46,15 @@ steps:
         sonar.organization=$(SONAR_ORG)
         sonar.sources=.
 
-  # ✅ Run Maven Build with Explicit Java & Maven Path
+  # ✅ Run Maven Build with Java 17 Fix
   - task: Maven@3
     inputs:
       mavenPomFile: 'pom.xml'
-      goals: 'clean install -U'
+      goals: 'clean install'
       publishJUnitResults: false
-      codeCoverageToolOption: 'JaCoCo'
-      javaHomeOption: 'Path'  # ✅ Set Java Home using Path
-      jdkUserInputPath: 'C:\Program Files\Java\jdk-17'  # ✅ Explicitly specify JDK Path
-      mavenVersionOption: 'Path'  # ✅ Ensures MAVEN_HOME is used
-      mavenPath: 'D:\WebGoat\apache-maven-3.9.9-bin\apache-maven-3.9.9'  # ✅ Explicit Maven Path
-      mavenOptions: '-Xmx1024m'
+      javaHomeOption: 'Path'  # Ensures JAVA_HOME is respected
+      mavenVersionOption: 'Path'  # Ensures MAVEN_HOME is used
+      mavenOptions: '-Xmx1024m -Dmaven.compiler.release=17'
       sonarQubeRunAnalysis: true
 
   - task: SonarCloudAnalyze@1
