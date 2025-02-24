@@ -40,16 +40,17 @@ steps:
         sonar.organization=$(SONAR_ORG)
         sonar.sources=.
 
-  # ✅ Run Maven Build with Explicit Maven Path
+  # ✅ Run Maven Build with Explicit Java & Maven Path
   - task: Maven@3
     inputs:
       mavenPomFile: 'pom.xml'
       goals: 'clean install -U'
       publishJUnitResults: false
       codeCoverageToolOption: 'JaCoCo'
-      javaHomeOption: 'Path'
-      mavenVersionOption: 'Path'
-      mavenPath: 'D:\WebGoat\apache-maven-3.9.9-bin\apache-maven-3.9.9'  # ✅ Explicitly set the Maven path
+      javaHomeOption: 'Path'  # ✅ Set Java Home using Path
+      jdkUserInputPath: 'C:\Program Files\Java\jdk-17'  # ✅ Explicitly specify JDK Path
+      mavenVersionOption: 'Path'  # ✅ Ensures MAVEN_HOME is used
+      mavenPath: 'D:\WebGoat\apache-maven-3.9.9-bin\apache-maven-3.9.9'  # ✅ Explicit Maven Path
       mavenOptions: '-Xmx1024m'
       sonarQubeRunAnalysis: true
 
