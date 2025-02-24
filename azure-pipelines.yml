@@ -26,11 +26,12 @@ steps:
       echo "##vso[task.prependpath]D:\WebGoat\apache-maven-3.9.9-bin\apache-maven-3.9.9\bin"
     displayName: 'Set Maven Path'
 
-  # ✅ Force Java 17 for Maven (Override without modifying pom.xml)
+  # ✅ Corrected Force Java 17 for Maven (Fixed Syntax)
   - script: |
       echo "Forcing Maven Compiler Plugin to use Java 17"
-      mvn -f pom.xml clean install -U -Dmaven.compiler.release=17
+      call mvn -f pom.xml clean install -U "-Dmaven.compiler.release=17"
     displayName: 'Force Java 17 for Maven'
+    workingDirectory: D:\agent\_work\1\s
 
   # ✅ Prepare SonarCloud Analysis
   - task: SonarCloudPrepare@1
