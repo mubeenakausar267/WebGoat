@@ -12,20 +12,19 @@ variables:
 steps:
   - checkout: self
 
-  # ✅ Manually set JAVA_HOME since JavaToolInstaller is failing
+  # ✅ Manually set JAVA_HOME
   - script: |
       echo "Setting JAVA_HOME manually"
       echo "##vso[task.setvariable variable=JAVA_HOME]C:\Program Files\Java\jdk-17"
       echo "##vso[task.prependpath]C:\Program Files\Java\jdk-17\bin"
     displayName: 'Set JAVA_HOME'
 
-  # ✅ Install Java 17
-  - task: JavaToolInstaller@0
-    inputs:
-      versionSpec: '17'
-      jdkArchitectureOption: 'x64'
-      jdkSourceOption: 'LocalDirectory'
-      jdkFile: 'C:\Program Files\Java\jdk-17'
+  # ✅ Manually set Maven Path
+  - script: |
+      echo "Setting Maven Path"
+      echo "##vso[task.setvariable variable=MAVEN_HOME]D:\WebGoat\apache-maven-3.9.9-bin\apache-maven-3.9.9"
+      echo "##vso[task.prependpath]D:\WebGoat\apache-maven-3.9.9-bin\apache-maven-3.9.9\bin"
+    displayName: 'Set Maven Path'
 
   # ✅ Prepare SonarCloud Analysis
   - task: SonarCloudPrepare@1
@@ -48,7 +47,7 @@ steps:
       goals: 'clean install -U'
       publishJUnitResults: false
       codeCoverageToolOption: 'JaCoCo'
-      javaHomeOption: 'JDKVersion'  # Ensure JDK 17 is picked up
+      javaHomeOption: 'JDKVersion'
       mavenVersionOption: 'Default'
       mavenOptions: '-Xmx1024m'
       sonarQubeRunAnalysis: true
