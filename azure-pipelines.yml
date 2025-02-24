@@ -24,7 +24,7 @@ steps:
     inputs:
       versionSpec: '17'
       jdkArchitectureOption: 'x64'
-      jdkDestinationDirectory: 'LocalDirectory'
+      jdkSourceOption: 'LocalDirectory'
       jdkFile: 'C:\Program Files\Java\jdk-17'
 
   # ✅ Prepare SonarCloud Analysis
