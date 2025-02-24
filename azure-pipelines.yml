@@ -2,7 +2,8 @@ trigger:
   - main  # Runs on the main branch
 
 pool:
-  vmImage: 'Default'  # Runs on free Microsoft-hosted agent= ubuntu-latest
+  #vmImage: 'Default'  # Runs on free Microsoft-hosted agent= ubuntu-latest
+  name: Default
 
 variables:
   SONAR_TOKEN: $(SonarCloudToken)  # Secret variable for SonarCloud
