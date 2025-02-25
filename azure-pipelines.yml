@@ -12,14 +12,14 @@ variables:
 steps:
   - checkout: self
 
-  # ✅ Install Java 17 Using JavaToolInstaller
+  # ✅ Install Java 17 Correctly
   - task: JavaToolInstaller@0
     inputs:
       versionSpec: '17'
-      jdkArchitecture: 'x64'
-      jdkSource: 'PreInstalled'  # Use PreInstalled to avoid downloading
+      jdkArchitectureOption: 'x64'  # ✅ Fixed the missing required input
+      jdkSourceOption: 'PreInstalled'  # Use PreInstalled to avoid downloading
 
-  # ✅ Ensure MAVEN_HOME is Set (Use the Installed Maven)
+  # ✅ Ensure MAVEN_HOME is Set (Use Installed Maven)
   - task: UseDotNet@2
     inputs:
       packageType: 'maven'
