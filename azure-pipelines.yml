@@ -12,12 +12,12 @@ variables:
 steps:
   - checkout: self
 
-  # ✅ Ensure Java 17 is Installed (Replaces 'UseJavaVersion')
+  # ✅ Install Java 17 Correctly
   - task: JavaToolInstaller@0
     inputs:
       versionSpec: '17'
-      jdkArchitecture: 'x64'
-      jdkSource: 'PreInstalled'
+      jdkArchitectureOption: 'x64'  # ✅ Fix: Correct parameter name
+      jdkSourceOption: 'PreInstalled'
 
   # ✅ Verify Java and Maven Versions Before Build
   - script: |
@@ -40,7 +40,7 @@ steps:
         sonar.organization=$(SONAR_ORG)
         sonar.sources=.
 
-  # ✅ Run Maven Build
+  # ✅ Run Maven Build with Java 17 Fix
   - task: Maven@3
     inputs:
       mavenPomFile: 'pom.xml'
