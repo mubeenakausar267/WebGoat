@@ -29,7 +29,7 @@ steps:
   # ✅ **Fix Maven Command Syntax (No More Syntax Error)**
   - script: |
       echo Forcing Maven Compiler Plugin to use Java 17...
-      call "D:\WebGoat\apache-maven-3.9.9-bin\apache-maven-3.9.9\bin\mvn.cmd" -f pom.xml clean install -U -Dmaven.compiler.release=17
+      cmd /c ""D:\WebGoat\apache-maven-3.9.9-bin\apache-maven-3.9.9\bin\mvn.cmd" -f pom.xml clean install -U -Dmaven.compiler.release=17"
     displayName: 'Force Java 17 for Maven'
     workingDirectory: D:\agent\_work\1\s
     failOnStderr: false
