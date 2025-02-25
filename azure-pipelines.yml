@@ -12,29 +12,25 @@ variables:
 steps:
   - checkout: self
 
-  # ✅ Set JAVA_HOME Environment Variable
-  - powershell: |
-      Write-Host "Setting JAVA_HOME..."
-      [System.Environment]::SetEnvironmentVariable("JAVA_HOME", "C:\Program Files\Java\jdk-17", "Process")
-      $env:Path += ";C:\Program Files\Java\jdk-17\bin"
-      Write-Host "JAVA_HOME is set to: $env:JAVA_HOME"
-    displayName: 'Set JAVA_HOME'
+  # ✅ Install Java 17 Using JavaToolInstaller
+  - task: JavaToolInstaller@0
+    inputs:
+      versionSpec: '17'
+      jdkArchitecture: 'x64'
+      jdkSource: 'PreInstalled'  # Use PreInstalled to avoid downloading
 
-  # ✅ Set MAVEN_HOME Environment Variable
-  - powershell: |
-      Write-Host "Setting MAVEN_HOME..."
-      [System.Environment]::SetEnvironmentVariable("MAVEN_HOME", "D:\WebGoat\apache-maven-3.9.9-bin\apache-maven-3.9.9", "Process")
-      $env:Path += ";D:\WebGoat\apache-maven-3.9.9-bin\apache-maven-3.9.9\bin"
-      Write-Host "MAVEN_HOME is set to: $env:MAVEN_HOME"
-    displayName: 'Set Maven Path'
-
-  # ✅ Run Maven Command Using PowerShell
-  - powershell: |
-      Write-Host "Forcing Maven Compiler Plugin to use Java 17..."
-      & "D:\WebGoat\apache-maven-3.9.9-bin\apache-maven-3.9.9\bin\mvn.cmd" -f "pom.xml" clean install -U "-Dmaven.compiler.release=17"
-    displayName: 'Force Java 17 for Maven'
-    workingDirectory: D:\agent\_work\1\s
-    failOnStderr: false
+  # ✅ Ensure MAVEN_HOME is Set (Use the Installed Maven)
+  - task: UseDotNet@2
+    inputs:
+      packageType: 'maven'
+      version: '3.9.9'
+  
+  # ✅ Verify Java and Maven Versions Before Build
+  - script: |
+      echo "Verifying Java and Maven Versions..."
+      java -version
+      mvn -version
+    displayName: 'Verify Java and Maven'
 
   # ✅ Prepare SonarCloud Analysis
   - task: SonarCloudPrepare@1
@@ -50,14 +46,14 @@ steps:
         sonar.organization=$(SONAR_ORG)
         sonar.sources=.
 
-  # ✅ Run Maven Build with Java 17 Fix
+  # ✅ Run Maven Build
   - task: Maven@3
     inputs:
       mavenPomFile: 'pom.xml'
       goals: 'clean install'
       publishJUnitResults: false
-      javaHomeOption: 'Path'  # Ensures JAVA_HOME is respected
-      mavenVersionOption: 'Path'  # Ensures MAVEN_HOME is used
+      javaHomeOption: 'JDKVersion'
+      mavenVersionOption: 'Default'
       mavenOptions: '-Xmx1024m -Dmaven.compiler.release=17'
       sonarQubeRunAnalysis: true
 
