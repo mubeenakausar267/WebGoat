@@ -42,15 +42,19 @@ steps:
         sonar.sources=.
 
   # ✅ Run Maven Build with Java 17
+
   - task: Maven@3
     inputs:
       mavenPomFile: 'pom.xml'
       goals: 'clean install'
       publishJUnitResults: false
       javaHomeOption: 'Path'
-      mavenVersionOption: 'Path'
+      jdkUserInputPath: 'C:\Program Files\Java\jdk-17'  # Explicit Java path
+      mavenVersionOption: 'Path'  
+      mavenPath: 'D:\WebGoat\apache-maven-3.9.9-bin\apache-maven-3.9.9\bin'  # ✅ Define Maven Path
       mavenOptions: '-Xmx1024m -Dmaven.compiler.release=17'
       sonarQubeRunAnalysis: true
+
 
   - task: SonarCloudAnalyze@1
 
