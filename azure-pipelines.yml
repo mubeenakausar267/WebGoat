@@ -2,7 +2,7 @@ trigger:
   - main  # Runs on the main branch
 
 pool:
-   name: Default  # ✅ Use Microsoft-hosted agent (No local agent issues)
+  vmImage: 'windows-latest'  # ✅ Use Microsoft-hosted agent with Java preinstalled
 
 variables:
   SONAR_TOKEN: $(SonarCloudToken)
@@ -12,14 +12,14 @@ variables:
 steps:
   - checkout: self
 
-  # ✅ Install Java 17 Correctly
+  # ✅ Set Java Version (Prefer Java 23, Fallback to 17 if Not Available)
   - task: JavaToolInstaller@0
     inputs:
-      versionSpec: '17'
-      jdkArchitectureOption: 'x64'  # ✅ Fix: Correct parameter name
-      jdkSourceOption: 'PreInstalled'
+      versionSpec: '23'  # ✅ Use Java 23
+      jdkArchitecture: 'x64'
+      jdkSource: 'PreInstalled'
 
-  # ✅ Verify Java and Maven Versions Before Build
+  # ✅ Verify Java & Maven Versions Before Build
   - script: |
       echo "Verifying Java and Maven Versions..."
       java -version
@@ -40,15 +40,15 @@ steps:
         sonar.organization=$(SONAR_ORG)
         sonar.sources=.
 
-  # ✅ Run Maven Build with Java 17 Fix
+  # ✅ Run Maven Build with Java 23
   - task: Maven@3
     inputs:
       mavenPomFile: 'pom.xml'
       goals: 'clean install'
       publishJUnitResults: false
-      javaHomeOption: 'Path'
+      javaHomeOption: 'Path'  # Ensures JAVA_HOME is respected
       mavenVersionOption: 'Default'
-      mavenOptions: '-Xmx1024m -Dmaven.compiler.release=17'
+      mavenOptions: '-Xmx1024m -Dmaven.compiler.release=23'  # ✅ Use Java 23 for Maven
       sonarQubeRunAnalysis: true
 
   - task: SonarCloudAnalyze@1
