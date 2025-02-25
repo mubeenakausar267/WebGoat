@@ -2,7 +2,7 @@ trigger:
   - main  # Runs on the main branch
 
 pool:
-  name: Default  # ✅ Use Local Agent
+   name: Default  # Using Local Agent
 
 variables:
   SONAR_TOKEN: $(SonarCloudToken)
@@ -12,26 +12,27 @@ variables:
 steps:
   - checkout: self
 
-  # ✅ Manually Set JAVA_HOME to Java 17
+  # ✅ Ensure Java 17 is Installed
   - script: |
-      echo "Setting JAVA_HOME to Java 17"
+      echo "Setting JAVA_HOME..."
       echo "##vso[task.setvariable variable=JAVA_HOME]C:\Program Files\Java\jdk-17"
       echo "##vso[task.prependpath]C:\Program Files\Java\jdk-17\bin"
     displayName: 'Set JAVA_HOME'
 
-  # ✅ Manually Set MAVEN_HOME
+  # ✅ Ensure Maven is Installed
   - script: |
       echo "Setting Maven Path..."
       echo "##vso[task.setvariable variable=MAVEN_HOME]D:\WebGoat\apache-maven-3.9.9-bin\apache-maven-3.9.9"
       echo "##vso[task.prependpath]D:\WebGoat\apache-maven-3.9.9-bin\apache-maven-3.9.9\bin"
-    displayName: 'Set MAVEN_HOME'
+    displayName: 'Set Maven Path'
 
-  # ✅ Verify Java & Maven Versions
+  # ✅ **Fix Java & Maven Verification (Syntax Fixed)**
   - script: |
       echo "Verifying Java and Maven Versions..."
-      java -version
-      mvn -version
+      "C:\Program Files\Java\jdk-17\bin\java.exe" -version
+      "D:\WebGoat\apache-maven-3.9.9-bin\apache-maven-3.9.9\bin\mvn.cmd" -version
     displayName: 'Verify Java and Maven'
+    failOnStderr: false
 
   # ✅ Prepare SonarCloud Analysis
   - task: SonarCloudPrepare@1
@@ -53,8 +54,8 @@ steps:
       mavenPomFile: 'pom.xml'
       goals: 'clean install'
       publishJUnitResults: false
-      javaHomeOption: 'Path'  # Ensures JAVA_HOME is respected
-      mavenVersionOption: 'Path'  # Ensures MAVEN_HOME is used
+      javaHomeOption: 'Path'
+      mavenVersionOption: 'Path'
       mavenOptions: '-Xmx1024m -Dmaven.compiler.release=17'
       sonarQubeRunAnalysis: true
 
