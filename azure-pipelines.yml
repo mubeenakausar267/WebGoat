@@ -2,7 +2,7 @@ trigger:
   - main  # Runs on the main branch
 
 pool:
-  name: Default
+  vmImage: 'ubuntu-latest'  # ✅ Use Microsoft-hosted agent (No local agent issues)
 
 variables:
   SONAR_TOKEN: $(SonarCloudToken)
@@ -12,19 +12,13 @@ variables:
 steps:
   - checkout: self
 
-  # ✅ Install Java 17 Correctly
+  # ✅ Ensure Java 17 is Installed (Replaces 'UseJavaVersion')
   - task: JavaToolInstaller@0
     inputs:
       versionSpec: '17'
-      jdkArchitectureOption: 'x64'  # ✅ Fixed the missing required input
-      jdkSourceOption: 'PreInstalled'  # Use PreInstalled to avoid downloading
+      jdkArchitecture: 'x64'
+      jdkSource: 'PreInstalled'
 
-  # ✅ Ensure MAVEN_HOME is Set (Use Installed Maven)
-  - task: UseDotNet@2
-    inputs:
-      packageType: 'maven'
-      version: '3.9.9'
-  
   # ✅ Verify Java and Maven Versions Before Build
   - script: |
       echo "Verifying Java and Maven Versions..."
@@ -52,7 +46,7 @@ steps:
       mavenPomFile: 'pom.xml'
       goals: 'clean install'
       publishJUnitResults: false
-      javaHomeOption: 'JDKVersion'
+      javaHomeOption: 'Path'
       mavenVersionOption: 'Default'
       mavenOptions: '-Xmx1024m -Dmaven.compiler.release=17'
       sonarQubeRunAnalysis: true
