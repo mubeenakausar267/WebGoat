@@ -2,7 +2,7 @@ trigger:
   - main  # Runs on the main branch
 
 pool:
-  vmImage: 'windows-latest'  # ✅ Use Microsoft-hosted agent with Java preinstalled
+  name: Default  # ✅ Use Local Agent
 
 variables:
   SONAR_TOKEN: $(SonarCloudToken)
@@ -12,14 +12,21 @@ variables:
 steps:
   - checkout: self
 
-  # ✅ Set Java Version (Prefer Java 23, Fallback to 17 if Not Available)
-  - task: JavaToolInstaller@0
-    inputs:
-      versionSpec: '23'  # ✅ Use Java 23
-      jdkArchitecture: 'x64'
-      jdkSource: 'PreInstalled'
+  # ✅ Manually Set JAVA_HOME to Java 17
+  - script: |
+      echo "Setting JAVA_HOME to Java 17"
+      echo "##vso[task.setvariable variable=JAVA_HOME]C:\Program Files\Java\jdk-17"
+      echo "##vso[task.prependpath]C:\Program Files\Java\jdk-17\bin"
+    displayName: 'Set JAVA_HOME'
 
-  # ✅ Verify Java & Maven Versions Before Build
+  # ✅ Manually Set MAVEN_HOME
+  - script: |
+      echo "Setting Maven Path..."
+      echo "##vso[task.setvariable variable=MAVEN_HOME]D:\WebGoat\apache-maven-3.9.9-bin\apache-maven-3.9.9"
+      echo "##vso[task.prependpath]D:\WebGoat\apache-maven-3.9.9-bin\apache-maven-3.9.9\bin"
+    displayName: 'Set MAVEN_HOME'
+
+  # ✅ Verify Java & Maven Versions
   - script: |
       echo "Verifying Java and Maven Versions..."
       java -version
@@ -40,15 +47,15 @@ steps:
         sonar.organization=$(SONAR_ORG)
         sonar.sources=.
 
-  # ✅ Run Maven Build with Java 23
+  # ✅ Run Maven Build with Java 17
   - task: Maven@3
     inputs:
       mavenPomFile: 'pom.xml'
       goals: 'clean install'
       publishJUnitResults: false
       javaHomeOption: 'Path'  # Ensures JAVA_HOME is respected
-      mavenVersionOption: 'Default'
-      mavenOptions: '-Xmx1024m -Dmaven.compiler.release=23'  # ✅ Use Java 23 for Maven
+      mavenVersionOption: 'Path'  # Ensures MAVEN_HOME is used
+      mavenOptions: '-Xmx1024m -Dmaven.compiler.release=17'
       sonarQubeRunAnalysis: true
 
   - task: SonarCloudAnalyze@1
