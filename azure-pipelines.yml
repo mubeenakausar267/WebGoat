@@ -36,10 +36,10 @@ steps:
   - task: SonarCloudPrepare@1
     inputs:
       SonarCloud: 'SonarCloudServiceConnection'
-      organization: '$(SONAR_ORG)'
+      organization: 'mubeenakausar267'
       scannerMode: 'CLI'
       configMode: 'manual'
-      cliprojectKey: '$(SONAR_PROJECT_KEY)'
+      cliprojectKey: 'mubeenakausar267_WebGoat'
       projectName: 'WebGoat'
       extraProperties: |
         sonar.projectKey=mubeenakausar267_WebGoat
