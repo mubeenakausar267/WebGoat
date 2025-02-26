@@ -45,8 +45,8 @@ steps:
         sonar.projectKey=mubeenakausar267_WebGoat
         sonar.organization=mubeenakausar267
         sonar.host.url=https://sonarcloud.io
-        sonar.token=$(SONAR_TOKEN)
-        sonar.login=$(SONAR_TOKEN)
+        sonar.token=477bf824ba55fe3d018a49b63a0ed63b2c993762
+        sonar.login=477bf824ba55fe3d018a49b63a0ed63b2c993762
 
 
   # ✅ Run Maven Build with Java 17 and Proper Test Skipping
