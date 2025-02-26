@@ -44,6 +44,7 @@ steps:
       extraProperties: |
         sonar.projectKey=$(SONAR_PROJECT_KEY)
         sonar.organization=$(SONAR_ORG)
+        sonar.token=$(SONAR_TOKEN)
         sonar.sources=.
 
   # ✅ Run Maven Build with Java 17 and Proper Test Skipping
