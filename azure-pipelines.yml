@@ -47,6 +47,8 @@ steps:
         sonar.host.url=https://sonarcloud.io
         sonar.token=477bf824ba55fe3d018a49b63a0ed63b2c993762
         sonar.login=477bf824ba55fe3d018a49b63a0ed63b2c993762
+        sonar.scanner.force-deprecated-pipeline=true
+
 
 
   # ✅ Run Maven Build with Java 17 and Proper Test Skipping
