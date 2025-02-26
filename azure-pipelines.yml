@@ -62,8 +62,6 @@ steps:
       mavenOptions: '-Xmx1024m -Dmaven.compiler.release=17 -DskipTests -Dmaven.test.skip=true -DskipITs -X -e'  # ✅ Full test skipping
       sonarQubeRunAnalysis: true
 
-  - task: SonarCloudAnalyze@1
-
   - task: SonarCloudPublish@1
     inputs:
       pollingTimeoutSec: '300'
