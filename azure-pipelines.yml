@@ -2,7 +2,7 @@ trigger:
   - main  # Runs on the main branch
 
 pool:
-   name: Default  # Using Local Agent
+  vmImage: 'windows-latest'  # ✅ Use Microsoft-hosted agent
 
 variables:
   SONAR_TOKEN: $(SonarCloudToken)
@@ -12,25 +12,16 @@ variables:
 steps:
   - checkout: self
 
-  # ✅ Ensure Java 17 is Installed
-  - script: |
-      echo "Setting JAVA_HOME..."
-      echo "##vso[task.setvariable variable=JAVA_HOME]C:\Program Files\Java\jdk-17"
-      echo "##vso[task.prependpath]C:\Program Files\Java\jdk-17\bin"
-    displayName: 'Set JAVA_HOME'
+  # ✅ Install Java 17 using JavaToolInstaller (Fix for missing UseJavaVersion)
+  - task: JavaToolInstaller@0
+    inputs:
+      versionSpec: '17'
+      jdkArchitecture: 'x64'
+      jdkSource: 'PreInstalled'  # ✅ Uses built-in Java 17 on Microsoft-hosted agent
 
-  # ✅ Ensure Maven is Installed
-  - script: |
-      echo "Setting Maven Path..."
-      echo "##vso[task.setvariable variable=MAVEN_HOME]D:\WebGoat\apache-maven-3.9.9-bin\apache-maven-3.9.9"
-      echo "##vso[task.prependpath]D:\WebGoat\apache-maven-3.9.9-bin\apache-maven-3.9.9\bin"
-    displayName: 'Set Maven Path'
-
-  # ✅ Clean up old test reports (Prevents Failsafe Plugin Errors)
-  - script: |
-      echo "Cleaning up old test reports..."
-      if exist D:\agent\_work\1\s\target\failsafe-reports rmdir /s /q D:\agent\_work\1\s\target\failsafe-reports
-    displayName: 'Clean Old Test Reports'
+  # ✅ Authenticate Maven (ensures dependencies resolve correctly)
+  - task: MavenAuthenticate@0
+    displayName: 'Authenticate Maven'
 
   # ✅ Prepare SonarCloud Analysis
   - task: SonarCloudPrepare@1
@@ -39,37 +30,36 @@ steps:
       organization: 'mubeenakausar267'
       scannerMode: 'CLI'
       configMode: 'manual'
-      cliprojectKey: 'mubeenakausar267_WebGoat'
+      projectKey: 'mubeenakausar267_WebGoat'
       projectName: 'WebGoat'
       extraProperties: |
         sonar.projectKey=mubeenakausar267_WebGoat
         sonar.organization=mubeenakausar267
         sonar.host.url=https://sonarcloud.io
-        sonar.token=477bf824ba55fe3d018a49b63a0ed63b2c993762
-        sonar.login=477bf824ba55fe3d018a49b63a0ed63b2c993762
+        sonar.login=$(SONAR_TOKEN)
+        sonar.verbose=true
         sonar.scanner.force-deprecated-pipeline=true
 
-
-
-  # ✅ Run Maven Build with Java 17 and Proper Test Skipping
+  # ✅ Run Maven Build with Proper Test Skipping
   - task: Maven@3
     inputs:
       mavenPomFile: 'pom.xml'
       goals: 'clean install'
       publishJUnitResults: false
-      javaHomeOption: 'Path'
-      jdkUserInputPath: 'C:\Program Files\Java\jdk-17'  # Explicit Java path
-      mavenVersionOption: 'Path'  
-      mavenPath: 'D:\WebGoat\apache-maven-3.9.9-bin\apache-maven-3.9.9'  # ✅ Correct Maven path
-      mavenOptions: '-Xmx1024m -Dmaven.compiler.release=17 -DskipTests -Dmaven.test.skip=true -DskipITs -X -e'  # ✅ Full test skipping
+      javaHomeOption: 'Path'  # ✅ Ensures correct Java usage
+      jdkUserInputPath: $(JAVA_HOME)  # ✅ Uses Java installed by JavaToolInstaller
+      mavenVersionOption: 'Default'  # ✅ Uses Microsoft-hosted Maven
+      mavenOptions: '-Xmx1024m -Dmaven.compiler.release=17 -DskipTests -Dmaven.test.skip=true -DskipITs -X -e'
       sonarQubeRunAnalysis: true
 
+  # ✅ Run SonarCloud Analysis with Debug Logging
   - task: SonarCloudAnalyze@1
     displayName: "Run SonarCloud Analysis"
     inputs:
       extraProperties: |
         sonar.verbose=true
 
+  # ✅ Publish SonarCloud Results
   - task: SonarCloudPublish@1
     inputs:
       pollingTimeoutSec: '300'
