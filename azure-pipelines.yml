@@ -12,12 +12,12 @@ variables:
 steps:
   - checkout: self
 
-  # ✅ Install Java 17 using JavaToolInstaller (Fix for missing UseJavaVersion)
+  # ✅ Install Java 17 properly with required architecture
   - task: JavaToolInstaller@0
     inputs:
       versionSpec: '17'
-      jdkArchitecture: 'x64'
-      jdkSource: 'PreInstalled'  # ✅ Uses built-in Java 17 on Microsoft-hosted agent
+      jdkArchitecture: 'x64'  # ✅ Required input fixed
+      jdkSource: 'PreInstalled'  # ✅ Uses Java from the hosted agent
 
   # ✅ Authenticate Maven (ensures dependencies resolve correctly)
   - task: MavenAuthenticate@0
