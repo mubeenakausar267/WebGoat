@@ -65,6 +65,10 @@ steps:
       sonarQubeRunAnalysis: true
 
   - task: SonarCloudAnalyze@1
+    displayName: "Run SonarCloud Analysis"
+    inputs:
+      extraProperties: |
+        sonar.verbose=true
 
   - task: SonarCloudPublish@1
     inputs:
