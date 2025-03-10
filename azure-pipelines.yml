@@ -18,7 +18,6 @@ steps:
       versionSpec: '17'
       jdkArchitectureOption: 'x64'  # ✅ Fixed the input name to jdkArchitectureOption
       jdkSourceOption: 'PreInstalled'  # ✅ Added the missing jdkSourceOption input
-      jdkSource: 'PreInstalled'  # ✅ Uses Java from the hosted agent
 
   # ✅ Authenticate Maven (ensures dependencies resolve correctly)
   - task: MavenAuthenticate@0
@@ -33,6 +32,7 @@ steps:
       configMode: 'manual'
       projectKey: 'mubeenakausar267_WebGoat'
       projectName: 'WebGoat'
+      cliProjectKey: 'mubeenakausar267_WebGoat'  # ✅ Added the missing cliProjectKey input
       extraProperties: |
         sonar.projectKey=mubeenakausar267_WebGoat
         sonar.organization=mubeenakausar267
