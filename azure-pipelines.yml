@@ -17,6 +17,7 @@ steps:
     inputs:
       versionSpec: '17'
       jdkArchitectureOption: 'x64'  # ✅ Fixed the input name to jdkArchitectureOption
+      jdkSourceOption: 'PreInstalled'  # ✅ Added the missing jdkSourceOption input
       jdkSource: 'PreInstalled'  # ✅ Uses Java from the hosted agent
 
   # ✅ Authenticate Maven (ensures dependencies resolve correctly)
