@@ -24,15 +24,15 @@ steps:
     displayName: 'Authenticate Maven'
 
   # ✅ Prepare SonarCloud Analysis
-  - task: SonarCloudPrepare@1
+  - task: SonarCloudPrepare@3
     inputs:
       SonarCloud: 'SonarCloudServiceConnection'
       organization: 'mubeenakausar267'
-      scannerMode: 'CLI'
+      scannerMode: 'cli'  # Use 'cli' if you're using Maven/Gradle
       configMode: 'manual'
       projectKey: 'mubeenakausar267_WebGoat'
       projectName: 'WebGoat'
-      cliProjectKey: 'mubeenakausar267_WebGoat'  # ✅ Added the missing cliProjectKey input
+      cliProjectKey: 'mubeenakausar267_WebGoat'
       extraProperties: |
         sonar.projectKey=mubeenakausar267_WebGoat
         sonar.organization=mubeenakausar267
@@ -40,6 +40,7 @@ steps:
         sonar.login=$(SONAR_TOKEN)
         sonar.verbose=true
         sonar.scanner.force-deprecated-pipeline=true
+
 
   # ✅ Run Maven Build with Proper Test Skipping
   - task: Maven@3
