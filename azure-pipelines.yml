@@ -16,7 +16,7 @@ steps:
   - task: JavaToolInstaller@0
     inputs:
       versionSpec: '17'
-      jdkArchitecture: 'x64'  # ✅ Required input fixed
+      jdkArchitectureOption: 'x64'  # ✅ Fixed the input name to jdkArchitectureOption
       jdkSource: 'PreInstalled'  # ✅ Uses Java from the hosted agent
 
   # ✅ Authenticate Maven (ensures dependencies resolve correctly)
