@@ -23,12 +23,12 @@ steps:
   - task: MavenAuthenticate@0
     displayName: 'Authenticate Maven'
 
-  # ✅ Prepare SonarCloud Analysis
+  # ✅ Prepare SonarCloud Analysis (ensure this task runs before analysis)
   - task: SonarCloudPrepare@3
     inputs:
       SonarCloud: 'SonarCloudServiceConnection'
       organization: 'mubeenakausar267'
-      scannerMode: 'cli'  # Use 'cli' if you're using Maven/Gradle
+      scannerMode: 'cli'  # Use 'cli' for Maven/Gradle
       configMode: 'manual'
       projectKey: 'mubeenakausar267_WebGoat'
       projectName: 'WebGoat'
@@ -40,7 +40,6 @@ steps:
         sonar.login=$(SONAR_TOKEN)
         sonar.verbose=true
         sonar.scanner.force-deprecated-pipeline=true
-
 
   # ✅ Run Maven Build with Proper Test Skipping
   - task: Maven@3
@@ -54,8 +53,8 @@ steps:
       mavenOptions: '-Xmx1024m -Dmaven.compiler.release=17 -DskipTests -Dmaven.test.skip=true -DskipITs -X -e'
       sonarQubeRunAnalysis: true
 
-  # ✅ Run SonarCloud Analysis with Debug Logging
-  - task: SonarCloudAnalyze@1
+  # ✅ Run SonarCloud Analysis with Debug Logging (Use the latest version)
+  - task: SonarCloudAnalyze@3
     displayName: "Run SonarCloud Analysis"
     inputs:
       extraProperties: |
